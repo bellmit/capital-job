@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yixin.alixjob.mapper.master.SendEmailMapper">
+  <resultMap id="SendEmailMap" type="com.yixin.alixjob.dto.email.AlixSendEmail">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="EMAIL_TYPE" jdbcType="VARCHAR" property="emailType" />
+    <result column="TO_MAILS" jdbcType="VARCHAR" property="toMails" />
+    <result column="TITLE" jdbcType="VARCHAR" property="title" />
+    <result column="CONTEXT_REMARK" jdbcType="VARCHAR" property="contextRemark" />
+    <result column="CC_MAILS" jdbcType="VARCHAR" property="ccMails" />
+    <result column="FILE_ADDRESS" jdbcType="VARCHAR" property="fileAddress" />
+    <result column="FILE_NAME" jdbcType="VARCHAR" property="fileName" />
+    <result column="SEND_STATUS" jdbcType="VARCHAR" property="sendStatus" />
+    <result column="SEND_TIME" jdbcType="VARCHAR" property="sendTime" />
+    <result column="CREATE_USER" jdbcType="VARCHAR" property="createUser" />
+    <result column="CREATED_TIME" jdbcType="VARCHAR" property="createdTime" />
+  </resultMap>
+
+  
+   <select id="getAlixSendEmail" parameterType="java.lang.String" resultMap = "SendEmailMap" >
+        select email.id,email.email_type,email.to_mails,email.title,email.context_remark,
+           email.cc_mails,email.file_address,email.file_name,email.send_status,email.send_time,
+           email.create_user,email.created_time from ALIX_SEND_EMAIL email where email.send_status=#{sendStatus}
+           and email.email_type=#{type} <![CDATA[and rownum<=#{maxNum}]]>
+  </select>
+    <update id="updateSendEmailStatusById" parameterType="java.lang.String">
+        UPDATE ALIX_SEND_EMAIL email set email.send_status=#{sendStatus},email.send_time=sysdate where id =#{id}
+    </update>
+</mapper>

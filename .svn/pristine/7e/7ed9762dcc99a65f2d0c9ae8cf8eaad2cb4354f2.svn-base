@@ -1,0 +1,8 @@
+﻿<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+    <div class="body">
+        <font size="4"><b>您好:</b></font><br/>
+            <p style="text-indent: 20px;" >&nbsp;&nbsp;<font size="4"><b>alix系统中有无下一处理人的申请件，申请编号为【<span  th:text="${asqbh}">asqbh</span>】，请及时转出。系统地址：<a href="alix.yiche.com">alix.yiche.com。</a>
+            </b></font></p>
+    </div>
+</html>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yixin.alixjob.mapper.master.capital.SendICBCEmailMapper">
+
+  <resultMap id="ICBCEmailMap" type="com.yixin.alixjob.dto.capital.ICBCEmailInfoDto">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="ASQBH" jdbcType="VARCHAR" property="asqbh" />
+    <result column="SSP_ID" jdbcType="VARCHAR" property="capitalCode" />
+    <result column="CREATETIME" jdbcType="DATE" property="createTime" />
+    <result column="ICBCSEND" jdbcType="CHAR" property="isSend" />
+    <result column="SENDTIME" jdbcType="DATE" property="sendTime" />
+    <result column="ABXJE" jdbcType="NUMERIC" property="fillRatesAmount" />
+  </resultMap>
+
+
+
+    <select id="queryICBCEmailInfoList" parameterType="java.lang.String" resultMap="ICBCEmailMap" >
+        select asqbh,abxje
+        from alix_union_icbcmail
+        where icbcsend != '1' order by createtime
+    </select>
+
+    <select id="queryICBCEmailAddress" parameterType="java.lang.String" resultType="String">
+        select
+        t.value
+        from sys_param_config t where t.name = #{asqbh}
+    </select>
+
+    <update id="updateSendEmailStatusByAsqbh" parameterType="java.lang.String">
+        UPDATE ALIX_UNION_ICBCMAIL email set email.icbcsend=#{status},email.SENDTIME=sysdate where asqbh =#{asqbh}
+    </update>
+</mapper>

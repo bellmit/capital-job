@@ -1,0 +1,18 @@
+{
+  "hints": [],
+  "groups": [
+    {
+      "sourceType": "com.yixin.alixjob.config.datasource.MasterDatasourceConfig",
+      "name": "spring.datasource.master",
+      "sourceMethod": "masterDataSource()",
+      "type": "javax.sql.DataSource"
+    },
+    {
+      "sourceType": "com.yixin.alixjob.config.datasource.SlaveDatasourceConfig",
+      "name": "spring.datasource.slave",
+      "sourceMethod": "slaveDataSource()",
+      "type": "javax.sql.DataSource"
+    }
+  ],
+  "properties": []
+}

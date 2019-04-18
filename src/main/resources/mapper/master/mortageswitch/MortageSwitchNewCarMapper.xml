@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yixin.alixjob.mapper.master.mortageswitch.MortageSwitchNewCarMapper">
+
+    <delete id="deleteTemp">
+          TRUNCATE TABLE DEALER_SWITCH_TEMP
+    </delete>
+    
+    <sql id="dealerIdForImages">
+        select dealer.aid
+                     from tsales_apply_contract contract
+                     left join tsales_apply_store store on store.asqbh=contract.asqbh
+                     left join tBase_Dealer dealer on dealer.aid=store.atbddm
+                     left join Tinfo_Loanfile loanfile on loanfile.asqbh=contract.asqbh
+                     left join  TINFO_LOANFILE_APPEAL appeal on store.asqbh=appeal.asqbh
+                     where  trunc(sysdate) &gt;= trunc(appeal.dqhrq) and contract.ahtzt='2' and nvl(loanfile.awjzt,'4') !='3'
+    </sql>
+
+    <insert id="saveTempForImages">
+
+         INSERT INTO DEALER_SWITCH_TEMP (ajxsdm)
+         SELECT DISTINCT  aid FROM (
+            <include refid="dealerIdForImages" />
+            UNION ALL
+            select descendant_brcode from tusermerger_bctl_rel where type='2' and ancestor_brcode in (
+              <include refid="dealerIdForImages" />
+            )
+            UNION ALL
+            select ancestor_brcode from tusermerger_bctl_rel where type='2' and descendant_brcode in (
+              <include refid="dealerIdForImages" />
+            )
+            UNION ALL
+            select descendant_brcode from tusermerger_bctl_rel where type='2' and ancestor_brcode in (
+              select ancestor_brcode from tusermerger_bctl_rel where type='2' and descendant_brcode in (
+                <include refid="dealerIdForImages"/>
+              )
+            )
+          ) WHERE  aid IS NOT NULL
+    </insert>
+
+    <update id="updateDealerForImages">
+        UPDATE
+            TBASE_DEALER td
+        SET
+            td.ASFXBZHFK = '1' ,
+            td.AESCSFXBZ = '1'
+        WHERE
+            td.AID IN (
+                SELECT
+                    ajxsdm
+                FROM
+                    dealer_switch_temp
+            )
+    </update>
+
+    <insert id="savePolicyChangeForImages">
+        insert into policy_change_log(id, channel_code,event_type, event_value, op_tms, op_reason, op_id, op_name)
+        (
+        select sys_guid(),dealer.aid,'0001001','1',sysdate,'系统自动切换','system','system'
+        from tBase_Dealer dealer INNER JOIN dealer_switch_temp temp ON temp.ajxsdm = dealer.AID where dealer.isnewtbasedealer = '1'
+        UNION
+        select sys_guid(),dealer.aid,'0001002','1',sysdate,'系统自动切换','system','system'
+        from tBase_Dealer dealer INNER JOIN dealer_switch_temp temp ON temp.ajxsdm = dealer.AID where dealer.isnewtbasedealer = '1'
+        )
+    </insert>
+
+    <insert id="saveChangeLogsForImages">
+        insert into TLog_Dealer_Switch(Id,Abz,Aczr,Dczsj,Ajxsdm,Aqhlx)
+        (select sys_guid(),'系统自动切换（影像件）','admin',sysdate,dealer.aid,'1'
+        from tBase_Dealer dealer  inner join dealer_switch_temp temp on temp.ajxsdm = dealer.aid)
+    </insert>
+
+    <insert id="saveRemidForImages">
+        insert into Tsys_Info_Remind(Id,Atxrylx,Atxnr,Atxsm,Aljdz,Atxlx,Atxry,Abz1,Abz2,Tsj,Aqybz)
+        (select sys_guid(),'4','客户贷后资料未完成上传已超期，店面系统已被切换','客户贷后资料超期未完成上传清单','/topcars/operate/archives/ftl/LoanfileSwitch.ftl?atbddm='||dealer.aid,
+        '01',dealer.aid,'233','admin',sysdate,'1'
+        from tBase_Dealer dealer
+        inner join dealer_switch_temp temp on temp.ajxsdm = dealer.aid
+        where not exists(select remind.abz2 from Tsys_Info_Remind remind where remind.atxlx='01' and remind.atxry=dealer.aid and remind.aqybz='1')   )
+    </insert>
+
+    <update id="recoverDealerForImages">
+        update tBase_Dealer dealer  set asfxbzhfk='0' where aid in (
+        select switch.Ajxsdm
+        from Dealer_Switch switch
+        where switch.Aczr='admin' and switch.Ajxsdm not IN (SELECT ajxsdm FROM dealer_switch_temp) and switch.aqhtj!=1
+	)
+    </update>
+
+    <insert id="savePolicyRecoverForImages">
+        insert into policy_change_log(id, channel_code,event_type, event_value, op_tms, op_reason, op_id, op_name)
+        (
+        select sys_guid(),dealer.aid,'0001001','0',sysdate,'系统自动切换','system','system'
+        from tBase_Dealer dealer
+        where dealer.aid in (
+            select switch.Ajxsdm
+            from Dealer_Switch switch
+            where switch.Aczr='admin'
+            and switch.Ajxsdm not IN (
+                SELECT ajxsdm FROM dealer_switch_temp
+                )
+            and switch.aqhtj!=1
+            )
+          and dealer.isnewtbasedealer = '1'
+        )
+    </insert>
+
+    <insert id="saveRecoverLogsForImages">
+        insert into TLog_Dealer_Switch(Id,Abz,Aczr,Dczsj,Ajxsdm,Aqhlx)
+        (
+        select sys_guid(),'系统恢复切换（影像件）','admin',sysdate,switch.ajxsdm,'0'
+        from Dealer_Switch switch
+        where switch.Aczr='admin' and switch.Ajxsdm not in(select ajxsdm from dealer_switch_temp) and switch.aqhtj!=1
+        )
+    </insert>
+
+    <update id="updateRemidForImages">
+        update Tsys_Info_Remind  set aqybz='0' where atxlx='01' and aqybz='1' and atxry not in(select ajxsdm from dealer_switch_temp)
+    </update>
+
+    <insert id="saveDealerSwitchForImages">
+        insert into Dealer_Switch(Id,Abz,Aczr,Dczsj,Ajxsdm,Aqhlx,aqhtj)
+        (select sys_guid(),'系统自动切换（影像件）','admin',sysdate,dealer.aid,'1',0
+        from tBase_Dealer dealer
+        where (not exists(select t.Ajxsdm from Dealer_Switch t where dealer.aid=t.Ajxsdm and aqhtj!=1 ) and dealer.aid in(select ajxsdm from dealer_switch_temp)))
+    </insert>
+
+    <delete id="deleteDealerSwitchForImages">
+          delete Dealer_Switch where  Aczr='admin' and Ajxsdm not in (
+		  select ajxsdm from dealer_switch_temp
+	      )  and aqhtj!=1
+    </delete>
+
+
+
+    <sql id="dealerIdForArchive">
+        select dealer.aid
+        from tsales_apply_contract contract
+        left join tsales_apply_store store on store.asqbh=contract.asqbh
+        left join Tinfo_Loanfile loanfile on loanfile.asqbh=contract.asqbh
+        left join  TINFO_LOANFILE_APPEAL appeal on store.asqbh=appeal.asqbh
+        left join  tBase_Dealer dealer on dealer.aid=store.atbddm
+        LEFT JOIN tsales_apply_car car ON car.ASQBH = contract.ASQBH
+        where trunc(loanfile.DWJZSHGRQ+30) &lt;= trunc(sysdate) and loanfile.asfjd='0' and contract.ahtzt='2' and car.ACLLX in ('1','3') and nvl(loanfile.awjzt,'4')='3'
+    </sql>
+
+    <insert id="saveTempForArchive">
+
+        INSERT INTO DEALER_SWITCH_TEMP (ajxsdm)
+        SELECT DISTINCT  aid FROM (
+        <include refid="dealerIdForArchive" />
+        UNION ALL
+        select descendant_brcode from tusermerger_bctl_rel where type='2' and ancestor_brcode in (
+        <include refid="dealerIdForArchive" />
+        )
+        UNION ALL
+        select ancestor_brcode from tusermerger_bctl_rel where type='2' and descendant_brcode in (
+        <include refid="dealerIdForArchive" />
+        )
+        UNION ALL
+        select descendant_brcode from tusermerger_bctl_rel where type='2' and ancestor_brcode in (
+        select ancestor_brcode from tusermerger_bctl_rel where type='2' and descendant_brcode in (
+        <include refid="dealerIdForArchive"/>
+        )
+        )
+        ) WHERE  aid IS NOT NULL
+    </insert>
+
+    <update id="updateDealerForArchive">
+        UPDATE
+        TBASE_DEALER td
+        SET
+        td.asfxbzhfkgd = '1'
+        WHERE
+        td.AID IN (
+        SELECT
+        ajxsdm
+        FROM
+        dealer_switch_temp
+        )
+    </update>
+
+    <insert id="savePolicyChangeForArchive">
+        insert into policy_change_log(id, channel_code,event_type, event_value, op_tms, op_reason, op_id, op_name)
+        (
+        select sys_guid(),dealer.aid,'0001003','1',sysdate,'系统自动切换','system','system'
+        from tBase_Dealer dealer INNER JOIN dealer_switch_temp temp ON temp.ajxsdm = dealer.AID where dealer.isnewtbasedealer = '1'
+        )
+    </insert>
+
+    <insert id="saveChangeLogsForArchive">
+        insert into TLog_Dealer_Switch(Id,Abz,Aczr,Dczsj,Ajxsdm,Aqhlx)
+        (
+        select sys_guid(),'系统自动切换新车（归档）','admin',sysdate,dealer.aid,'1'
+        from tBase_Dealer dealer  inner join dealer_switch_temp temp on temp.ajxsdm = dealer.aid
+        )
+    </insert>
+
+    <insert id="saveRemidForArchive">
+        insert into Tsys_Info_Remind(Id,Atxrylx,Atxnr,Atxsm,Aljdz,Atxlx,Atxry,Abz1,Abz2,Tsj,Aqybz)
+        (select sys_guid(),'4','客户贷后资料实物未完成归档已超期，店面系统已被切换','客户贷后资料超期未完成实物归档','/topcars/operate/archives/ftl/LoanfileSwitch.ftl?atbddm='||dealer.aid,
+        '04',dealer.aid,'233','admin',sysdate,'1'
+        from tBase_Dealer dealer
+        inner join dealer_switch_temp temp on temp.ajxsdm = dealer.aid
+        where not exists(select remind.abz2 from Tsys_Info_Remind remind where remind.atxlx='04' and remind.atxry=dealer.aid and remind.aqybz='1')   )
+    </insert>
+
+    <update id="recoverDealerForArchive">
+        update tBase_Dealer dealer  set asfxbzhfkgd='0' where aid in (
+        select switch.Ajxsdm
+        from Dealer_Switch switch
+        where switch.Aczr='admin' and switch.Ajxsdm not IN (SELECT ajxsdm FROM dealer_switch_temp)
+        and switch.aqhtj = 1 and switch.asfxcqh=1
+        )
+    </update>
+
+    <insert id="savePolicyRecoverForArchive">
+        insert into policy_change_log(id, channel_code,event_type, event_value, op_tms, op_reason, op_id, op_name)
+        (
+            select sys_guid(),dealer.aid,'0001003','0',sysdate,'系统自动切换','system','system'
+            from tBase_Dealer dealer
+            where dealer.aid in (
+              select switch.Ajxsdm
+              from Dealer_Switch switch
+              where switch.Aczr='admin'
+              and switch.Ajxsdm not IN ( SELECT ajxsdm FROM dealer_switch_temp )
+              and switch.aqhtj = 1 and switch.asfxcqh=1
+            )
+        and dealer.isnewtbasedealer = '1'
+        )
+    </insert>
+
+    <insert id="saveRecoverLogsForArchive">
+        insert into TLog_Dealer_Switch(Id,Abz,Aczr,Dczsj,Ajxsdm,Aqhlx)
+        (
+        select sys_guid(),'系统恢复切换新车（归档）','admin',sysdate,switch.ajxsdm,'0'
+        from Dealer_Switch switch
+        where switch.Aczr='admin' and switch.Ajxsdm not in(select ajxsdm from dealer_switch_temp) and switch.aqhtj=1 and switch.asfxcqh=1
+        )
+    </insert>
+
+    <update id="updateRemidForArchive">
+        update Tsys_Info_Remind  set aqybz='0' where atxlx='04' and aqybz='1' and atxry not in(select ajxsdm from dealer_switch_temp)
+    </update>
+
+    <insert id="saveDealerSwitchForArchive">
+        insert into Dealer_Switch(Id,Abz,Aczr,Dczsj,Ajxsdm,Aqhlx,aqhtj,asfxcqh)
+        (select sys_guid(),'系统自动切换（影像件）','admin',sysdate,dealer.aid,'1',1 ,1
+        from tBase_Dealer dealer
+        where (not exists(select t.Ajxsdm from Dealer_Switch t where dealer.aid=t.Ajxsdm and t.aqhtj=1 and t.asfxcqh=1 ) and dealer.aid in(select ajxsdm from dealer_switch_temp)))
+    </insert>
+
+    <delete id="deleteDealerSwitchForArchive">
+        delete Dealer_Switch where  Aczr='admin' and Ajxsdm not in (
+        select ajxsdm from dealer_switch_temp
+        )  and aqhtj=1 and asfxcqh=1
+    </delete>
+
+</mapper>

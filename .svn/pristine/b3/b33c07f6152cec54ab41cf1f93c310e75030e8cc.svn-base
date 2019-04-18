@@ -1,0 +1,30 @@
+package com.yixin.alixjob.schedule;
+
+import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.handler.annotation.JobHandler;
+import com.xxl.job.core.log.XxlJobLogger;
+import com.yixin.alixjob.common.Constants;
+import com.yixin.alixjob.service.SendEmailService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+
+/**
+ * 35W复核任务邮件定时
+ * @author  yangjinbao
+ */
+@JobHandler(value = "checkAmountEmailJobHandler")
+@Component
+public class CheckAmountEmailJobHandler extends IJobHandler {
+    @Autowired
+    private SendEmailService sendEmailService;
+
+    @Override
+    public ReturnT<String> execute(String param) throws Exception {
+        XxlJobLogger.log(">>>>>>>ApproveAmountEmailJobHandler>>>>>>>>>>>>>>>>>");
+        sendEmailService.sendEail(Constants.TYPE_2);
+        return new ReturnT<String>(200, "ok===0000");
+    }
+
+}

@@ -1,0 +1,33 @@
+package com.yixin.alixjob.schedule;
+
+import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.handler.annotation.JobHandler;
+import com.xxl.job.core.log.XxlJobLogger;
+import com.yixin.alixjob.common.Constants;
+import com.yixin.alixjob.service.mortageswitch.factory.MortageSwitchFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+@JobHandler(value = "mortgageModelSwitch")
+@Component
+public class MortgageModelSwitchJobHandler extends IJobHandler {
+
+    @Override
+    public ReturnT<String> execute(String param) throws Exception {
+        XxlJobLogger.log(">>>>>>>mortgageModelSwitch>>>>>>>>>>>>>>>>>start>>>>>>");
+        XxlJobLogger.log(">>>>>>>抵押模式切换：新车影像件>>>>>>>>>>>>start>>>>>>");
+        MortageSwitchFactory.getMortageSwitchService(Constants.CAR_TYPE_NEW).swtichModelForImages();
+        XxlJobLogger.log("<<<<<<<抵押模式切换：新车影像件<<<<<<<<<<<<end<<<<<<<<");
+        XxlJobLogger.log(">>>>>>>抵押模式切换：新车归档>>>>>>>>>>>>start>>>>>>");
+        MortageSwitchFactory.getMortageSwitchService(Constants.CAR_TYPE_OLD).swtichModelForArchive();
+        XxlJobLogger.log("<<<<<<<抵押模式切换：新车归档<<<<<<<<<<<<end<<<<<<<<");
+        XxlJobLogger.log(">>>>>>>抵押模式切换：二手车归档>>>>>>>>>>>>start>>>>>>");
+        MortageSwitchFactory.getMortageSwitchService(Constants.CAR_TYPE_RESOURCE).swtichModelForArchive();
+        XxlJobLogger.log("<<<<<<<抵押模式切换：二手车归档<<<<<<<<<<<<end<<<<<<<<");
+        XxlJobLogger.log("<<<<<<<mortgageModelSwitch<<<<<<<<<<<<end<<<<<<<<");
+
+        return new ReturnT<String>(200, "ok===0000");
+    }
+
+}

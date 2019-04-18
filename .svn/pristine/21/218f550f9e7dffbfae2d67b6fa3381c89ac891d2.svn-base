@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<configuration debug="false" scan="true" scanPeriod="5 seconds">
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <logger name="org.springframework.com.yixin" level="DEBUG"/>
+    <contextName>alix-job</contextName>
+
+    <property name="log.home" value="/data1/d_info/"/>
+    <property name="log.base" value="logs/alix-job"/>
+    <property name="log.path" value="${log.home}/${log.base}/alix-job.log"/>
+    <!--<property name="log.error.path" value="${log.home}/${log.base}/alix-job.error.log"/>-->
+    <!--<property name="web.log.path" value="${log.home}/${log.base}/alix-job.web.log"/>-->
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <Target>System.out</Target>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${log.path}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <FileNamePattern>${log.path}.%d{yyyy-MM-dd_HH}.%i.log</FileNamePattern>
+            <MaxHistory>30</MaxHistory>
+            <MaxFileSize>100MB</MaxFileSize>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework.jndi" level="INFO"/>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+    <logger name="com.yixin" level="INFO"/>
+</configuration>

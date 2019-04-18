@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+	<div>
+		<div>
+			<font size="4"><b>【<span  th:text="${brName}">brName</span>】您好:</b></font><br/>
+			<p style="text-indent: 20px;">
+				<font size="3"><b>&nbsp;&nbsp;您的alix系统中有待处理的申请，申请编号【<span  th:text="${asqbh}">asqbh</span>】，请及时处理！
+					系统地址：<a href="alix.yiche.com">alix.yiche.com。</a></b></font>
+			</p>
+		</div>
+	</div>
+</html>

@@ -1,0 +1,539 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yixin.alixjob.mapper.master.erp.ERPMapper">
+
+   <select id="queryFailDataList" resultType="map">
+       SELECT batch_num AS "batchNum",interface_name AS "interfaceName" FROM erp_send_fail WHERE status = 'I'
+   </select>
+
+   <select id="queryContractEffectByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+            SOURCESYSTEM,
+            INTERFACENAME,
+            BATCHNUM,
+            LINECOUNT,
+            value1,
+            value2,
+            value3,
+            value4,
+            value5,
+            value6,
+            value7,
+            value8,
+            value9,
+            value10,
+            value11,
+            value12,
+            value13,
+            value14,
+            value15,
+            value16,
+            value17,
+            value18,
+            value19,
+            value20,
+            value21,
+            value22,
+            value23,
+            value24,
+            value25,
+            value26,
+            value27,
+            value28,
+            value29,
+            value30,
+            value31,
+            value32,
+            value33,
+            value34,
+            value35,
+            value36,
+            value37,
+            value38,
+            value39,
+            value40,
+            value41,
+            value42,
+            value43,
+            value44,
+            value45,
+            value46,
+            value47,
+            value48,
+            value49,
+            value50,
+            value51,
+            value52,
+            value53,
+            value54,
+            value55,
+            value56,
+            value57,
+            value58,
+            value59,
+            value60,
+            value61,
+            value62,
+            value63,
+            value64,
+            value65,
+            value66,
+            value67,
+            value68,
+            value69,
+            value70,
+            value71,
+            value72,
+            value73,
+            value74,
+            value75,
+            value76,
+            value77,
+            value100,
+            value120,
+            value200
+        FROM
+            TERP_Contract_effect_LOG
+        WHERE
+            BATCHNUM = #{batchNum}
+            and status = 'R'
+   </select>
+
+    <select id="queryContractCancelByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value120,
+        value200
+        FROM
+        TERP_CONTRACT_CANCEL_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and status = 'R'
+    </select>
+
+    <select id="queryContractNotEffectByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        value8,
+        value9,
+        value10,
+        value11,
+        value12,
+        value13,
+        value14,
+        value15,
+        value16,
+        value17,
+        value18,
+        value19,
+        value20,
+        value21,
+        value22,
+        value23,
+        value24,
+        value25,
+        value26,
+        value27,
+        value28,
+        value29,
+        value30,
+        value31,
+        value32,
+        value33,
+        value34,
+        value35,
+        value36,
+        value37,
+        value38,
+        value39,
+        value40,
+        value41,
+        value42,
+        value43,
+        value44,
+        value45,
+        value46,
+        value47,
+        value48,
+        value49,
+        value50,
+        value51,
+        value52,
+        value53,
+        value54,
+        value55,
+        value56,
+        value57,
+        value58,
+        value59,
+        value60,
+        value61,
+        value62,
+        value63,
+        value64,
+        value65,
+        value66,
+        value67,
+        value68,
+        value69,
+        value70,
+        value71,
+        value72,
+        value73,
+        value74,
+        value75,
+        value76,
+        value77,
+        value100,
+        value120,
+        value200
+        FROM
+        ERP_NOT_EFFECTIVE_CONTRACT_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and status = 'R'
+    </select>
+
+    <select id="queryContractTOOWNByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        value8,
+        value9,
+        value10,
+        value11,
+        value12,
+        value13,
+        value14,
+        value15,
+        value16,
+        value17,
+        value18,
+        value19,
+        value20,
+        value21,
+        value22,
+        value23,
+        value24,
+        value25,
+        value26,
+        value27,
+        value28,
+        value29,
+        value30,
+        value31,
+        value32,
+        value33,
+        value34,
+        value35,
+        value36,
+        value37,
+        value38,
+        value39,
+        value40,
+        value41,
+        value42,
+        value43,
+        value44,
+        value45,
+        value46,
+        value47,
+        value48,
+        value49,
+        value50,
+        value51,
+        value52,
+        value53,
+        value54,
+        value55,
+        value56,
+        value57,
+        value58,
+        value59,
+        value60,
+        value61,
+        value62,
+        value63,
+        value64,
+        value100,
+        value120,
+        value200
+        FROM
+        TERP_TRANSFERTOYX_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and status = 'R'
+    </select>
+
+    <select id="queryLOANDFROMBANKByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value120,
+        value200
+        FROM
+        ERP_BANK_LOAN_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and astatus = 'R'
+    </select>
+
+    <select id="queryLOANFROMYIXINByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        value8,
+        value9,
+        value10,
+        value11,
+        value12,
+        value13,
+        value14,
+        value120,
+        value200
+        FROM
+        ERP_YIXIN_LOAN_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and astatus = 'R'
+    </select>
+
+    <select id="queryREPAYPLANByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value14,
+        value15,
+        value16,
+        value17,
+        value18,
+        value19,
+        value20,
+        value21,
+        value22,
+        value23,
+        value24,
+        value26,
+        value27,
+        value28,
+        value120,
+        value200
+        FROM
+        TERP_FINANCIAL_REPAYPLAN_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and status = 'R'
+    </select>
+
+
+    <select id="queryTRANSFERCANCELByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value120,
+        value200
+        FROM
+        TERP_TRANSFERTOYX_CANCLE
+        WHERE
+        BATCHNUM = #{batchNum}
+        and status = 'R'
+    </select>
+
+    <select id="queryYXLOANDFROMBANKByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        value8
+        FROM
+        erp_YXbank_loan_log
+        WHERE
+        BATCHNUM = #{batchNum}
+        and astatus = 'R'
+    </select>
+
+    <select id="queryXWPAYMENTByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        value8,
+        value9,
+        value10,
+        value11,
+        value12,
+        value13,
+        value14,
+        value15,
+        value16,
+        value17,
+        value18,
+        value19,
+        value20,
+        value21,
+        value22,
+        value23,
+        value24,
+        value25,
+        value26,
+        value27,
+        value28,
+        value29,
+        value30,
+        value31,
+        value32,
+        value33,
+        value34,
+        value35,
+        value36,
+        value37,
+        value38,
+        value39,
+        value40,
+        value120,
+        value200
+        FROM
+        TERP_XW_PAYMENT_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and status = 'R'
+    </select>
+
+    <select id="queryBSGUARANTEEFEEByBatchNum" parameterType="string" resultType="com.yixin.alixjob.dto.erp.ERPBaseDTO">
+        SELECT
+        SOURCESYSTEM,
+        INTERFACENAME,
+        BATCHNUM,
+        LINECOUNT,
+        value1,
+        value2,
+        value3,
+        value4,
+        value5,
+        value6,
+        value7,
+        value8,
+        value9,
+        value10,
+        value11,
+        value12,
+        value13,
+        value14,
+        value15,
+        value16,
+        value17,
+        value18,
+        value19,
+        value20,
+        value21,
+        value22,
+        value23,
+        value24,
+        value25,
+        value26,
+        value27,
+        value28,
+        value29,
+        value30,
+        value31,
+        value32,
+        value33,
+        value34,
+        value35,
+        value36,
+        value120,
+        value200
+        FROM
+        TERP_BS_GUARANTEE_FEE_LOG
+        WHERE
+        BATCHNUM = #{batchNum}
+        and status = 'R'
+    </select>
+
+    <update id="updateResendStatus"  parameterType="list">
+        <foreach collection="list" item="item" index="i" close=";end;" open="begin" separator=";">
+            UPDATE erp_send_fail
+            <set>
+                status = #{item.status},update_time = sysdate
+            </set>
+            where batch_num = #{item.batchNum}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yixin.alixjob.mapper.master.AttachmentExportMapper">
+
+  <resultMap id="AttachmentLoadDetailMap" type="com.yixin.alixjob.dto.attachment.AttachmentLoadDetail">
+    <result column="id" jdbcType="VARCHAR" property="id" />
+    <result column="TRADE_NO" jdbcType="VARCHAR" property="tradeNo" />
+    <result column="ASQBH" jdbcType="VARCHAR" property="asqbh" />
+    <result column="IS_NEW_FILE" jdbcType="VARCHAR" property="isNewFile" />
+    <result column="FILE_CLASS_TYPE" jdbcType="VARCHAR" property="fileClassType" />
+    <result column="FILE_CLASS_SUB_TYPE" jdbcType="VARCHAR" property="fileClassSubType" />
+    <result column="FILE_CLASS_TYPE_NAME" jdbcType="VARCHAR" property="fileClassTypeName" />
+    <result column="FILE_CLASS_SUBTYPE_NAME" jdbcType="VARCHAR" property="fileClassSubTypeName" />
+    <result column="FILE_PATH" jdbcType="VARCHAR" property="filePath" />
+
+  </resultMap>
+
+
+
+    <select id="selectOneTradeNo" parameterType="java.lang.String" resultType = "string" >
+        select trade_no
+        from attachment_load_log
+        where rownum = 1
+          and status = '0'
+    </select>
+
+   <select id="selectExportNewAttachmentDetails" parameterType="java.lang.String" resultMap = "AttachmentLoadDetailMap" >
+        select tdetail.id,
+               tdetail.trade_no,
+               tdetail.asqbh,
+               tdetail.is_new_file,
+               tdetail.file_class_type,
+               tdetail.file_class_sub_type,
+               tclass.afjdlmc              file_class_type_name,
+               tclass.afjxlmc              file_class_subtype_name
+          from attachment_load_detail_log tdetail
+         inner join tattachment_class tclass
+            on tdetail.file_class_type = tclass.afjdl
+           and tdetail.file_class_sub_type = tclass.afjxl
+         where tdetail.is_new_file = '1'
+           and tdetail.trade_no = #{tradeNo}
+  </select>
+
+
+    <select id="selectExportOldAttachmentDetails" parameterType="java.lang.String" resultMap = "AttachmentLoadDetailMap" >
+
+       select tdetail.id,
+              tdetail.trade_no,
+              tdetail.asqbh,
+              tdetail.is_new_file,
+              tdetail.file_class_type,
+              tdetail.file_class_sub_type,
+              tclass.afjdlmc file_class_type_name,
+              tclass.afjxlmc file_class_subtype_name,
+              tfile.anewfilepath || '/' || tfile.anewfilename  file_path
+         from attachment_load_detail_log tdetail
+        inner join tattachment_class tclass
+           on tdetail.file_class_type = tclass.afjdl
+          and tdetail.file_class_sub_type = tclass.afjxl
+        inner join tfileattachment tfile
+           on tfile.adocumentno = tdetail.asqbh
+          and tfile.atattachclass = tdetail.file_class_type
+          and tfile.atattachsubclass = tdetail.file_class_sub_type
+          and (tfile.asfyx is null or tfile.asfyx = '1')
+        where tdetail.is_new_file = '0'
+          and tdetail.trade_no = #{tradeNo}
+
+  </select>
+
+    <update id="updateAttachmentExportStatus" parameterType="java.lang.String">
+        update attachment_load_log tload
+           set tload.status   = #{status},
+               tload.tar_path = #{tarPath},
+               tload.tar_name = #{tarName}
+         where tload.trade_no = #{tradeNo}
+           and tload.status = '0'
+    </update>
+</mapper>

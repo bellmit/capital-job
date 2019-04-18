@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yixin.alixjob.mapper.master.GenerateFileMapper">
+	<select id="getBusinessDataTotalCount" parameterType="java.lang.String"
+		resultType="Integer">
+		select count(1) from ifrs_busi_data
+	</select>
+
+	<select id="getRepayDataTotalCount" parameterType="java.lang.String"
+		resultType="Integer">
+		select count(1) from ifrs_repay_data
+	</select>
+
+	<update id="deleteBusiData" parameterType="java.lang.String">
+		truncate table ifrs_busi_data
+	</update>
+
+	<update id="deleteRepayData" parameterType="java.lang.String">
+		truncate table ifrs_repay_data
+	</update>
+
+	<insert id="insertBusiDataToTemp" parameterType="java.lang.String">
+		insert into ifrs_busi_data
+		(asqbh,transdate,zfid,dhtdqrq,yqts,fbzj,aywlx,acllx,azxyqlx,izxyqqs,fmqkhzj,fjsll,fkhll,fsxfl,fjssxfl,fwfje,ahkpl,
+		dwzt,ahthm,atbddm,atbdmc,apzsx,moneytype,frze,acplb,acpid,acpmc,arzqx,ahtzt,dhtsxrq)
+		select
+		main.asqbh,
+		to_char(last_day(add_months(sysdate, -1)),'yyyyMMdd') transdate,
+		'YX'
+		zfid,
+		to_char(contract.dhtdqrq, 'yyyyMMdd') dhtdqrq,
+		to_char(rep.izxyqts) yqts,
+		to_char(cost.fbzj,'FM9999990.00') fbzj,
+		main.aywlx,
+		car.acllx,
+		rep.azxyqlx,
+		to_char(rep.izxyqqs)
+		izxyqqs,
+		to_char(cost.fmqkhzj,'FM9999990.00') fmqkhzj,
+		to_char(cost.fjsll,'FM9999990.00') fjsll,
+		to_char(cost.fkhll,'FM9999990.00') fkhll,
+		to_char(cost.fsxfl,'FM9999990.00') fsxfl,
+		to_char(cost.fjssxfl,'FM9999990.00') fjssxfl,
+		to_char(cost.fwfje,'FM9999990.00') fwfje,
+		main.ahkpl,
+		addr.dwzt dwzt,
+		contract.ahthm,
+		store.azlgsdm,
+		store.azlgsmc,
+		main.apzsx,
+		'1' moneytype,
+		to_char(cost.frze,'FM9999990.00') frze,
+		plan.acplb,
+		plan.id acpid,
+		plan.acpmc,
+		main.arzqx,
+		contract.ahtzt,
+		trim(to_char(contract.dhtsxrq,'yyyyMMdd')) dhtsxrq
+		from tsales_apply_main
+		main
+		inner join tsales_apply_car car
+		on car.asqbh = main.asqbh
+		inner join
+		tsales_apply_cost cost
+		on cost.asqbh = main.asqbh
+		inner join
+		tsales_apply_contract contract
+		on contract.asqbh = main.asqbh
+		inner join
+		tsales_apply_store store
+		on store.asqbh = main.asqbh
+		inner join
+		tinfo_product_plan plan
+		on plan.id = main.acpfaid
+		and
+		plan.productversion = main.productversion
+		left join
+		tasset_expire_cust_report rep
+		on rep.asqbh = main.asqbh
+		left join tinfo_gps_tolocation_address addr
+   		on addr.cjh = car.acjh
+		where 1 = 1
+		and
+		not exists (select 1
+		from alix_union_mapping zfxx
+		where zfxx.asqbh =
+		main.asqbh
+		           <![CDATA[and zfxx.ssp_id <> 'YX']]>)
+		and store.azlgsdm in ('0002','0003')
+		   <![CDATA[and main.dsctjrq < trunc(sysdate,'MM')]]>
+	</insert>
+
+	<insert id="insertRepayDataToTemp">
+		insert into ifrs_repay_data (asqbh,afqxh,dzzrq,fyzyg)
+		select
+		main.asqbh,
+		plan.afqxh,
+		to_char(plan.dzzrq, 'yyyyMMdd') dzzrq,
+		to_char(plan.fyzyg, 'FM9999990.00') fyzyg
+		from tsales_apply_main main
+		inner join tsales_apply_contract contr
+		on main.asqbh = contr.asqbh
+		inner join tsales_repay_plan plan
+		on plan.asqbh = main.asqbh
+		where
+		contr.ahtzt = '2'
+		and
+		not exists (select 1
+		from alix_union_mapping zfxx
+		where zfxx.asqbh =
+		main.asqbh
+		           <![CDATA[and zfxx.ssp_id <> 'YX']]>)
+		<![CDATA[and plan.afqxh <> '0']]>
+		<![CDATA[and plan.afqxh <> '99']]>
+		<![CDATA[and plan.dzzrq >= trunc(sysdate,'MM')]]>
+		and plan.azt in ('1', '2')
+	</insert>
+
+	<select id="selectBusiDataByIndex" resultType="String">
+		select
+		transdate||'|+|'||asqbh||'|+|'||zfid||'|+|'||dhtdqrq||'|+|'||yqts||'|+|'||fbzj||'|+|'||aywlx||'|+|'||acllx||'|+|'||azxyqlx||'|+|'||izxyqqs||'|+|'||fmqkhzj||'|+|'||fjsll||'|+|'||fkhll||'|+|'||fsxfl||'|+|'||fjssxfl||'|+|'||fwfje||'|+|'||ahkpl||'|+|'||dwzt||'|+|'||ahthm||'|+|'||atbddm||'|+|'||atbdmc||'|+|'||apzsx||'|+|'||moneytype||'|+|'||frze||'|+|'||acplb||'|+|'||acpid||'|+|'||acpmc||'|+|'||arzqx||'|+|'||ahtzt||'|+|'||dhtsxrq||'|+|' strcon
+		from ifrs_busi_data
+	</select>
+
+	<select id="selectRepayDataByIndex" resultType="String">
+		select 
+		asqbh||'|+|'||dzzrq||'|+|'||fyzyg||'|+|'||afqxh||'|+|' strcon
+		from ifrs_repay_data
+	</select>
+
+</mapper>

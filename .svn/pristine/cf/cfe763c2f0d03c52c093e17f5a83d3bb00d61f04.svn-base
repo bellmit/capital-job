@@ -1,0 +1,14 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="alixjob公共开发平台"></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="../static/css/main.css" th:href="@{/css/main.css}" />
+</head>
+<body>
+<div class="page-content">
+    <h1 th:text="|Hello ${name}!|"></h1>
+    <h2 th:text="|Welcome ALIX-JOB 公共 job|"></h2>
+</div>
+</body>
+</html>

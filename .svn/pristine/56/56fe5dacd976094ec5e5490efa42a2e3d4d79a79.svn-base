@@ -1,0 +1,30 @@
+package com.yixin.alixjob.schedule;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.xxl.job.core.biz.model.ReturnT;
+import com.xxl.job.core.handler.IJobHandler;
+import com.xxl.job.core.handler.annotation.JobHandler;
+import com.xxl.job.core.log.XxlJobLogger;
+import com.yixin.alixjob.service.GenerateFileService;
+
+
+/**
+ * 月初生成还款计划txt文件，并通知IFRS9
+ * @author  lihai
+ */
+@JobHandler(value = "generateRepayFileJobHandler")
+@Component
+public class GenerateRepayFileJobHandler extends IJobHandler {
+    @Autowired
+    private GenerateFileService generateFileService;
+
+    @Override
+    public ReturnT<String> execute(String param) throws Exception {
+        XxlJobLogger.log(">>>>>>>generateRepayFileJobHandler>>>>>>>>>>>>>>>>>");
+        generateFileService.generateRepaymentFile();
+        return new ReturnT<String>(200, "ok===0000");
+    }
+
+}

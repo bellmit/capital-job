@@ -1,0 +1,149 @@
+
+#\u8BBE\u7F6E\u7AEF\u53E3
+#server.port=8181
+#context \u4E0A\u4E0B\u6587\u4EF6
+#server.context-path=/alix_api
+
+
+#===============================================================#
+#==================== datasrouce config ===========================#
+#===============================================================#
+spring.datasource.type= com.alibaba.druid.pool.DruidDataSource
+
+### master数据库配置
+spring.datasource.master.url=jdbc:oracle:thin:@10.10.0.124:1521:alix
+spring.datasource.master.username=alix
+spring.datasource.master.password=Vd2Wols18l=0
+spring.datasource.master.driver-class-name=oracle.jdbc.driver.OracleDriver
+
+### slave数据库配置
+spring.datasource.slave.url=jdbc:oracle:thin:@10.10.0.124:1521:alix
+spring.datasource.slave.username=alix
+spring.datasource.slave.password=Vd2Wols18l=0
+spring.datasource.slave.driver-class-name=oracle.jdbc.driver.OracleDriver
+
+spring.datasource.druid.initial-size=5
+spring.datasource.druid.max-active= 20
+spring.datasource.druid.min-idle= 5
+#\u914D\u7F6E\u83B7\u53D6\u8FDE\u63A5\u7B49\u5F85\u8D85\u65F6\u7684\u65F6\u95F4
+spring.datasource.druid.max-wait= 60000
+# Oracle\u8BF7\u4F7F\u7528
+spring.datasource.druid.validation-query= SELECT 1 FROM DUAL
+spring.datasource.druid.test-while-idle=true
+spring.datasource.druid.test-on-borrow=false
+spring.datasource.druid.test-on-return=false
+#\u6253\u5F00PSCache\uFF0C\u5E76\u4E14\u6307\u5B9A\u6BCF\u4E2A\u8FDE\u63A5\u4E0APSCache\u7684\u5927\u5C0F
+spring.datasource.druid.pool-prepared-statements=true
+spring.datasource.druid.max-pool-prepared-statement-per-connection-size=100
+#\u914D\u7F6E\u95F4\u9694\u591A\u4E45\u624D\u8FDB\u884C\u4E00\u6B21\u68C0\u6D4B\uFF0C\u68C0\u6D4B\u9700\u8981\u5173\u95ED\u7684\u7A7A\u95F2\u8FDE\u63A5\uFF0C\u5355\u4F4D\u662F\u6BEB\u79D2
+spring.datasource.druid.time-between-eviction-runs-millis=60000
+# \u914D\u7F6E\u4E00\u4E2A\u8FDE\u63A5\u5728\u6C60\u4E2D\u6700\u5C0F\u751F\u5B58\u7684\u65F6\u95F4\uFF0C\u5355\u4F4D\u662F\u6BEB\u79D2
+spring.datasource.druid.min-evictable-idle-time-millis=300000
+
+#\u914D\u7F6E\u76D1\u63A7\u7EDF\u8BA1\u62E6\u622A\u7684filters\uFF0C\u53BB\u6389\u540E\u76D1\u63A7\u754C\u9762sql\u65E0\u6CD5\u7EDF\u8BA1\uFF0C'wall'\u7528\u4E8E\u9632\u706B\u5899
+spring.datasource.druid.filters=stat,wall,log4j
+# Spring\u76D1\u63A7\u914D\u7F6E\uFF0C\u8BF4\u660E\u8BF7\u53C2\u8003Druid Github Wiki\uFF0C\u914D\u7F6E_Druid\u548CSpring\u5173\u8054\u76D1\u63A7\u914D\u7F6E
+# Spring\u76D1\u63A7AOP\u5207\u5165\u70B9\uFF0C\u5982x.y.z.service.*,\u914D\u7F6E\u591A\u4E2A\u82F1\u6587\u9017\u53F7\u5206\u9694
+spring.datasource.druid.aop-patterns= com.yixin.alixapi.service
+
+#===============================================================#
+#=========== REDIS (RedisProperties) ===========================#
+#===============================================================#
+# Redis\u6570\u636E\u5E93\u7D22\u5F15\uFF08\u9ED8\u8BA4\u4E3A0\uFF09
+#spring.redis.database=0
+# Redis\u670D\u52A1\u5668\u5730\u5740
+#spring.redis.host=192.168.155.43
+#\uFF08\u666E\u901A\u96C6\u7FA4\uFF0C\u4E0D\u4F7F\u7528\u5219\u4E0D\u7528\u5F00\u542F\uFF09\u4EE5\u9017\u53F7\u5206\u9694\u7684\u201C\u4E3B\u673A\uFF1A\u7AEF\u53E3\u201D\u5BF9\u5217\u8868\u8FDB\u884C\u5F15\u5BFC
+spring.redis.cluster.nodes=192.168.145.24:6379,192.168.145.24:6380,192.168.145.25:6379,192.168.145.25:6380,192.168.145.26:6379,192.168.145.26:6380
+# \u8FDE\u63A5\u6C60\u6700\u5927\u8FDE\u63A5\u6570\uFF08\u4F7F\u7528\u8D1F\u503C\u8868\u793A\u6CA1\u6709\u9650\u5236\uFF09
+spring.redis.pool.max-active=20
+# \u8FDE\u63A5\u6C60\u6700\u5927\u963B\u585E\u7B49\u5F85\u65F6\u95F4\uFF08\u4F7F\u7528\u8D1F\u503C\u8868\u793A\u6CA1\u6709\u9650\u5236\uFF09
+spring.redis.pool.max-wait=-1
+# \u8FDE\u63A5\u6C60\u4E2D\u7684\u6700\u5927\u7A7A\u95F2\u8FDE\u63A5
+spring.redis.pool.max-idle=8
+# \u8FDE\u63A5\u6C60\u4E2D\u7684\u6700\u5C0F\u7A7A\u95F2\u8FDE\u63A5
+spring.redis.pool.min-idle=0
+# \u8FDE\u63A5\u8D85\u65F6\u65F6\u95F4\uFF08\u6BEB\u79D2\uFF09
+spring.redis.timeout=0
+spring.redis.commandTimeout=5000
+
+
+#===============================================================#
+#==================== dev xxl-job 配置 config ===========================#
+#===============================================================#
+### xxl-job admin address list, such as "http://address" or "http://address01,http://address02"
+xxl.job.admin.addresses=http://192.168.145.97:8083/alixjob-admin
+### xxl-job executor address
+xxl.job.executor.appname=capitalJob
+xxl.job.executor.ip=
+xxl.job.executor.port=9999
+
+### xxl-job, access token
+xxl.job.accessToken=
+
+### xxl-job log path
+xxl.job.executor.logpath=../logs/jobhandler
+### xxl-job log retention days
+xxl.job.executor.logretentiondays=-1
+
+
+#===============================================================#
+#==================== mongodb config ===========================#
+#===============================================================#
+#spring.data.mongodb.uri=mongodb://alix_rw:Tyarfvikm!3824@192.168.155.32:27017,192.168.155.32:27018,192.168.155.32:27019/alix
+
+#redis\u7F13\u5B58\u5F00\u5173
+taoche.redis.onOroff=on
+taochepay.redis.onOroff=on
+
+#\u6700\u5927\u8BF7\u6C42\u6B21\u6570
+taoche_max_req_num=10
+taochepay_max_req_num=10
+
+attachment.export.tar.path=D:/home/app/exportfile
+attachment.export.new.path=D:/home/app/exportfile/new
+attachment.export.old.path=D:/home/app/exportfile/old
+attachment.export.script.new=D:/home/app/filecpscript/new
+attachment.export.script.old=D:/home/app/filecpscript/old
+attachment.export.script=D:/home/app/filecpscript
+
+
+ftp.host=10.0.8.73
+ftp.username=ftpdsj
+ftp.password=JNVt7BpCfo_s
+ftp.port=51000
+ftp.data.path=/data
+
+
+#\u4E1A\u52A1\u6570\u636E\u5206\u9875\u6761\u6570
+busiMaxNum=100000
+#\u8FD8\u6B3E\u8BA1\u5212\u5206\u9875\u6761\u6570
+repayMaxNum=100000
+#\u4E1A\u52A1\u6570\u636E\u5199\u5165\u8DEF\u5F84
+#busiWritePath=/home/app/wanglei/yw/
+busiWritePath=C:\\Users\\ThinkPad\\Desktop\\IFRS9\\business\\
+#\u8FD8\u6B3E\u8BA1\u5212\u5199\u5165\u8DEF\u5F84
+#repayWritePath=/home/app/wanglei/plan/
+repayWritePath=C:\\Users\\ThinkPad\\Desktop\\IFRS9\\repay\\
+#\u4E1A\u52A1\u6570\u636Eshell\u811A\u672C\u7EDD\u5BF9\u8DEF\u5F84
+busiShellScriptPath=/home/app/wanglei/test.sh
+#\u8FD8\u6B3E\u8BA1\u5212shell\u811A\u672C\u7EDD\u5BF9\u8DEF\u5F84
+repayShellScriptPath=/home/app/wanglei/test2.sh
+#\u4E1A\u52A1\u6570\u636E\u6587\u4EF6\u5408\u5E76\u540E\u8DEF\u5F84
+mergeBusiTxtPath=/home/app/wanglei/ywtmp/
+#\u8FD8\u6B3E\u8BA1\u5212\u6587\u4EF6\u5408\u5E76\u540E\u8DEF\u5F84
+mergeRepayTxtPath=/home/app/wanglei/plantmp/
+#\u6570\u636E\u6587\u4EF6\u6253\u5305\u540E\u8DEF\u5F84
+compressFilePath=/home/app/wanglei/tarDir/
+ifrsSftpFilePath=/home/oracle/ifrsdev/ifrs_data/
+
+ifrsSftpAddress=192.168.177.69
+ifrsSftpPort=22
+ifrsSftpUsername=oracle
+ifrsSftpPassword=Jxr@rpy4S8J
+
+noticeBusiUrl=http://192.168.177.69:8080/i9-web/alixBusiness/receiveData
+noticeRepayUrl=http://192.168.177.69:8080/i9-web/alixrepaymentPlan/receiveData
+
+erp.url=http://192.168.155.128/hscsm/api/public/impdata
+erp.querystatus.url=http://192.168.155.128/hscsm/api/public/getImpRsult
